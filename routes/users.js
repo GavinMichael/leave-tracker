@@ -6,7 +6,7 @@ const { ensureAuthenticated } = require('../config/auth');
 const { ensureAuthorized } = require('../config/auth');
 
 // Load User model
-const User = require('../models/user');
+const User = require('../models/User');
 
 // Login Page
 router.get('/login', (req, res) => res.render('login'));
@@ -18,11 +18,11 @@ router.get('/register', ensureAuthenticated, ensureAuthorized, (req, res) => res
 // Register
 // Only available for Admin users
 router.post('/register', ensureAuthenticated, ensureAuthorized, (req, res) => {
-  const { name, email, role, team, password, password2 } = req.body;
+  const { name, email, empID, role, team, password, password2 } = req.body;
   console.log(req.body)
   let errors = [];
 
-  if (!name || !email || !role || !role || !password || !password2) {
+  if (!name || !email || !empID || !role || !team || !password || !password2) {
     errors.push({ msg: 'Please enter all fields' });
   }
 
@@ -38,6 +38,9 @@ router.post('/register', ensureAuthenticated, ensureAuthorized, (req, res) => {
     res.render('register', {
       errors,
       name,
+      empID,
+      role,
+      team,
       email,
       password,
       password2
@@ -49,16 +52,21 @@ router.post('/register', ensureAuthenticated, ensureAuthorized, (req, res) => {
         res.render('register', {
           errors,
           name,
+          empID,
+          role,
+          team,
           email,
           password,
           password2
         });
       } else {
         const newUser = new User({
+          errors,
           name,
-          email,
+          empID,
           role,
           team,
+          email,
           password
         });
 
